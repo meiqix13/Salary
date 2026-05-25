@@ -1,0 +1,305 @@
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600&display=swap');
+  :root {
+    --accent:#1D9E75; --accent-light:#E1F5EE; --accent-muted:#9FE1CB;
+    --danger:#E24B4A; --danger-light:#FCEBEB;
+    --mono:'DM Mono',monospace; --sans:'Sora',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  #app{font-family:var(--sans);padding:1rem 0;width:100%;}
+  .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:8px;}
+  .header h1{font-size:18px;font-weight:600;color:var(--color-text-primary);letter-spacing:-0.3px;}
+  .month-badge{font-size:11px;font-family:var(--mono);background:var(--accent-light);color:#0F6E56;padding:3px 8px;border-radius:4px;font-weight:500;white-space:nowrap;}
+  .btn-row{display:flex;gap:6px;flex-shrink:0;}
+  .btn-icon{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer;font-size:18px;transition:background 0.15s;}
+  .btn-icon:hover{background:var(--color-background-secondary);}
+  .btn-icon.export{background:#185FA5;color:white;border-color:#185FA5;}
+  .btn-icon.export:hover{opacity:0.88;}
+  .form-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;margin-bottom:1rem;}
+  .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+  .field:last-of-type{margin-bottom:0;}
+  .field label{font-size:10px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.6px;font-family:var(--mono);}
+  .field input,.field select{font-family:var(--mono);font-size:15px;padding:11px 12px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);color:var(--color-text-primary);width:100%;transition:border-color 0.15s;-webkit-appearance:none;appearance:none;}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--accent);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .btn-add{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:var(--border-radius-md);font-family:var(--sans);font-size:15px;font-weight:500;cursor:pointer;margin-top:12px;transition:opacity 0.15s,transform 0.1s;letter-spacing:0.2px;}
+  .btn-add:active{transform:scale(0.99);opacity:0.9;}
+  .result-strip{background:var(--accent-light);border:0.5px solid var(--accent-muted);border-radius:var(--border-radius-md);padding:10px 12px;margin-top:10px;font-family:var(--mono);color:#0F6E56;display:flex;gap:0;align-items:stretch;}
+  .rs-item{display:flex;flex-direction:column;gap:1px;flex:1;padding:0 10px;}
+  .rs-item:first-child{padding-left:0;}
+  .rs-item+.rs-item{border-left:0.5px solid var(--accent-muted);}
+  .rs-val{font-size:15px;font-weight:500;}
+  .rs-lbl{font-size:9px;opacity:0.7;text-transform:uppercase;letter-spacing:0.4px;}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem;}
+  .stat-wide{grid-column:span 2;}
+  .stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;}
+  .stat-card .sv{font-size:18px;font-weight:500;font-family:var(--mono);color:var(--color-text-primary);}
+  .stat-card .sl{font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.4px;font-family:var(--mono);margin-top:1px;}
+  .section-label{font-size:10px;font-weight:500;color:var(--color-text-secondary);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;}
+  .history-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;}
+  .entry-row{padding:11px 12px;border-bottom:0.5px solid var(--color-border-tertiary);transition:background 0.1s;}
+  .entry-row:last-child{border-bottom:none;}
+  .entry-row:active{background:var(--color-background-secondary);}
+  .entry-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+  .entry-date{font-family:var(--mono);font-size:13px;color:var(--color-text-primary);font-weight:500;}
+  .entry-sal{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--color-text-primary);}
+  .entry-bot{display:flex;align-items:center;gap:8px;}
+  .entry-meta{font-family:var(--mono);font-size:11px;color:var(--color-text-secondary);}
+  .badge{display:inline-block;font-size:10px;font-family:var(--mono);padding:2px 6px;border-radius:3px;font-weight:500;}
+  .badge-wk{background:#E6F1FB;color:#185FA5;}
+  .badge-we{background:#EEEDFE;color:#534AB7;}
+  .badge-ph{background:#FAEEDA;color:#854F0B;}
+  .btn-del{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);padding:4px 6px;border-radius:3px;font-size:16px;margin-left:auto;}
+  .btn-del:active{color:var(--danger);background:var(--danger-light);}
+  .total-bar{display:flex;justify-content:space-between;align-items:center;background:var(--color-text-primary);color:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-top:1rem;}
+  .total-bar .t-label{font-size:11px;font-family:var(--mono);opacity:0.6;text-transform:uppercase;letter-spacing:0.5px;}
+  .total-bar .t-amount{font-size:26px;font-weight:600;font-family:var(--mono);letter-spacing:-1px;}
+  .empty-state{padding:2rem 1rem;text-align:center;color:var(--color-text-secondary);font-size:13px;font-family:var(--mono);line-height:1.9;}
+  .import-hint{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:9px 12px;font-size:12px;font-family:var(--mono);color:var(--color-text-secondary);margin-bottom:1rem;display:flex;align-items:flex-start;gap:7px;line-height:1.5;}
+  #file-input{display:none;}
+  .toast{background:var(--color-text-primary);color:var(--color-background-primary);padding:10px 16px;border-radius:var(--border-radius-md);font-size:13px;font-family:var(--mono);opacity:0;transition:opacity 0.3s;pointer-events:none;text-align:center;margin-top:10px;min-height:0;max-height:0;overflow:hidden;}
+  .toast.show{opacity:1;min-height:auto;max-height:60px;margin-top:10px;}
+</style>
+
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Mobile salary accumulator with Excel import and export</h2>
+<div id="app">
+
+  <div class="header">
+    <div style="display:flex;align-items:baseline;gap:8px;min-width:0;">
+      <h1>Salary</h1>
+      <span class="month-badge" id="month-badge">—</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn-icon" onclick="document.getElementById('file-input').click()" aria-label="Import Excel"><i class="ti ti-upload" aria-hidden="true"></i></button>
+      <button class="btn-icon export" onclick="exportExcel()" aria-label="Export Excel"><i class="ti ti-download" aria-hidden="true"></i></button>
+    </div>
+  </div>
+  <input type="file" id="file-input" accept=".xlsx" onchange="importExcel(event)">
+
+  <div class="import-hint">
+    <i class="ti ti-info-circle" style="font-size:14px;flex-shrink:0;margin-top:1px" aria-hidden="true"></i>
+    <span><i class="ti ti-upload" style="font-size:12px" aria-hidden="true"></i> import to continue a previous month &nbsp;·&nbsp; <i class="ti ti-download" style="font-size:12px" aria-hidden="true"></i> export to save</span>
+  </div>
+
+  <div class="form-card">
+    <div class="field">
+      <label>Date</label>
+      <input type="date" id="inp-date">
+    </div>
+    <div class="field">
+      <label>Day type</label>
+      <select id="inp-type">
+        <option value="13">Weekday — $13/hr</option>
+        <option value="16">Weekend — $16/hr</option>
+        <option value="19.5">Public holiday — $19.50/hr</option>
+      </select>
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label>Start time</label>
+        <input type="time" id="inp-start">
+      </div>
+      <div class="field">
+        <label>End time</label>
+        <input type="time" id="inp-end">
+      </div>
+    </div>
+    <div class="field" style="margin-top:10px">
+      <label>Break (hours)</label>
+      <input type="number" id="inp-break" min="0" step="0.25" value="0" inputmode="decimal">
+    </div>
+    <button class="btn-add" onclick="addEntry()"><i class="ti ti-plus" aria-hidden="true"></i> Add entry</button>
+    <div id="result-strip" class="result-strip" style="display:none">
+      <div class="rs-item"><span class="rs-lbl">Worked</span><span class="rs-val" id="rs-hrs">—</span></div>
+      <div class="rs-item"><span class="rs-lbl">Break</span><span class="rs-val" id="rs-brk">—</span></div>
+      <div class="rs-item"><span class="rs-lbl">Earned</span><span class="rs-val" id="rs-earned">—</span></div>
+    </div>
+  </div>
+
+  <div class="stats-grid" id="stats-grid" style="display:none">
+    <div class="stat-card"><div class="sv" id="st-shifts">0</div><div class="sl">Shifts</div></div>
+    <div class="stat-card"><div class="sv" id="st-hours">0h</div><div class="sl">Total hours</div></div>
+    <div class="stat-card stat-wide"><div class="sv" id="st-avg">$0.00</div><div class="sl">Average per shift</div></div>
+  </div>
+
+  <div class="section-label">History</div>
+  <div class="history-card">
+    <div id="history-body"></div>
+  </div>
+
+  <div class="total-bar">
+    <span class="t-label">Total earned</span>
+    <span class="t-amount" id="total-disp">$0.00</span>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+let records = [];
+
+function setDefaultDate(){
+  const d=new Date(), pad=n=>String(n).padStart(2,'0');
+  document.getElementById('inp-date').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+
+function calcHours(s,e){
+  const [sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number);
+  let start=sh*60+sm,end=eh*60+em;
+  if(end<=start)end+=1440;
+  return(end-start)/60;
+}
+
+function fmtDate(str){
+  if(!str)return'';
+  const[y,m,d]=str.split('-');
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return`${d} ${mo[parseInt(m)-1]} ${y}`;
+}
+
+function typeInfo(rate){
+  const r=parseFloat(rate);
+  if(r===13)return['Weekday','badge-wk'];
+  if(r===16)return['Weekend','badge-we'];
+  return['PH','badge-ph'];
+}
+
+function updateMonthBadge(){
+  const badge=document.getElementById('month-badge');
+  if(!records.length){badge.textContent='—';return;}
+  const first=new Date(records.map(r=>r.date).sort()[0]);
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  badge.textContent=`${mo[first.getMonth()]} ${first.getFullYear()}`;
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function addEntry(){
+  const date=document.getElementById('inp-date').value;
+  const start=document.getElementById('inp-start').value;
+  const end=document.getElementById('inp-end').value;
+  const brk=parseFloat(document.getElementById('inp-break').value)||0;
+  const rate=parseFloat(document.getElementById('inp-type').value);
+  if(!date||!start||!end){alert('Please fill in date, start, and end time.');return;}
+  const rawHrs=calcHours(start,end);
+  const finalHrs=Math.max(0,rawHrs-brk);
+  const earned=finalHrs*rate;
+  records.unshift({id:Date.now(),date,start,end,brk,rate,hours:finalHrs,earned});
+  const rs=document.getElementById('result-strip');
+  rs.style.display='flex';
+  document.getElementById('rs-hrs').textContent=`${(rawHrs).toFixed(2)}h`;
+  document.getElementById('rs-brk').textContent=brk>0?`-${brk.toFixed(2)}h`:'0h';
+  document.getElementById('rs-earned').textContent=`$${earned.toFixed(2)}`;
+  render();
+  showToast('Entry added');
+}
+
+function deleteEntry(id){
+  if(!confirm('Delete this entry?'))return;
+  records=records.filter(r=>r.id!==id);
+  render();
+}
+
+function render(){
+  const body=document.getElementById('history-body');
+  const sg=document.getElementById('stats-grid');
+  updateMonthBadge();
+  if(!records.length){
+    body.innerHTML='<div class="empty-state"><i class="ti ti-clock" style="font-size:22px" aria-hidden="true"></i><br>No entries yet.<br>Add a shift above or import an Excel file.</div>';
+    document.getElementById('total-disp').textContent='$0.00';
+    sg.style.display='none';return;
+  }
+  sg.style.display='grid';
+  let total=0,totalHrs=0,html='';
+  records.forEach(r=>{
+    total+=parseFloat(r.earned);totalHrs+=parseFloat(r.hours);
+    const[tlabel,tclass]=typeInfo(r.rate);
+    html+=`<div class="entry-row">
+      <div class="entry-top">
+        <span class="entry-date">${fmtDate(r.date)}</span>
+        <span class="entry-sal">$${parseFloat(r.earned).toFixed(2)}</span>
+      </div>
+      <div class="entry-bot">
+        <span class="badge ${tclass}">${tlabel}</span>
+        <span class="entry-meta">${parseFloat(r.hours).toFixed(2)}h · $${parseFloat(r.rate)}/hr</span>
+        ${r.brk>0?`<span class="entry-meta">-${parseFloat(r.brk).toFixed(2)}h break</span>`:''}
+        <button class="btn-del" onclick="deleteEntry(${r.id})" aria-label="Delete"><i class="ti ti-trash" aria-hidden="true"></i></button>
+      </div>
+    </div>`;
+  });
+  body.innerHTML=html;
+  document.getElementById('total-disp').textContent=`$${total.toFixed(2)}`;
+  document.getElementById('st-shifts').textContent=records.length;
+  document.getElementById('st-hours').textContent=`${totalHrs.toFixed(1)}h`;
+  document.getElementById('st-avg').textContent=`$${(total/records.length).toFixed(2)}`;
+}
+
+function exportExcel(){
+  if(!records.length){alert('No entries to export.');return;}
+  const wb=XLSX.utils.book_new();
+  const dataRows=[['ID','Date','Start','End','Break (hrs)','Rate ($/hr)','Hours Worked','Salary ($)','Day Type']];
+  records.forEach(r=>{
+    const[tlabel]=typeInfo(r.rate);
+    dataRows.push([r.id,r.date,r.start,r.end,parseFloat(r.brk),parseFloat(r.rate),parseFloat(parseFloat(r.hours).toFixed(2)),parseFloat(parseFloat(r.earned).toFixed(2)),tlabel]);
+  });
+  const ws=XLSX.utils.aoa_to_sheet(dataRows);
+  ws['!cols']=[16,12,10,10,12,12,14,12,12].map(w=>({wch:w}));
+  XLSX.utils.book_append_sheet(wb,ws,'Records');
+  const sorted=[...records].sort((a,b)=>a.date.localeCompare(b.date));
+  const firstDate=sorted[0]?.date||'';
+  const total=records.reduce((s,r)=>s+parseFloat(r.earned),0);
+  const totalHrs=records.reduce((s,r)=>s+parseFloat(r.hours),0);
+  const summaryRows=[
+    ['SALARY REPORT SUMMARY',''],['',''],
+    ['Period',`${fmtDate(firstDate)} – ${fmtDate(sorted[sorted.length-1]?.date||'')}`],
+    ['Generated',new Date().toLocaleDateString('en-MY')],['',''],
+    ['Total shifts',records.length],
+    ['Total hours',parseFloat(totalHrs.toFixed(2))],
+    ['Total salary',parseFloat(total.toFixed(2))],
+    ['Average per shift',parseFloat((total/records.length).toFixed(2))],['',''],
+    ['Weekday shifts',records.filter(r=>parseFloat(r.rate)===13).length],
+    ['Weekend shifts',records.filter(r=>parseFloat(r.rate)===16).length],
+    ['Public holiday shifts',records.filter(r=>parseFloat(r.rate)===19.5).length],
+  ];
+  const ws2=XLSX.utils.aoa_to_sheet(summaryRows);
+  ws2['!cols']=[{wch:24},{wch:28}];
+  XLSX.utils.book_append_sheet(wb,ws2,'Summary');
+  const d=new Date(firstDate);
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  XLSX.writeFile(wb,`Salary_${mo[d.getMonth()]}_${d.getFullYear()}.xlsx`);
+  showToast('Excel exported!');
+}
+
+function importExcel(event){
+  const file=event.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      const ws=wb.Sheets['Records'];
+      if(!ws){alert('Cannot find a "Records" sheet. Make sure this file was exported from this app.');return;}
+      const rows=XLSX.utils.sheet_to_json(ws,{header:1});
+      const imported=[];
+      for(let i=1;i<rows.length;i++){
+        const[id,date,start,end,brk,rate,hours,earned]=rows[i];
+        if(!date||!start||!end)continue;
+        imported.push({id:id||Date.now()+i,date,start,end,brk:parseFloat(brk)||0,rate:parseFloat(rate),hours:parseFloat(hours),earned:parseFloat(earned)});
+      }
+      if(!imported.length){alert('No valid records found.');return;}
+      records=imported;
+      document.getElementById('result-strip').style.display='none';
+      render();showToast(`Imported ${imported.length} entries`);
+    }catch(err){alert('Could not read the file. Make sure it was exported from this app.');}
+  };
+  reader.readAsBinaryString(file);
+  event.target.value='';
+}
+
+setDefaultDate();render();
+</script>
