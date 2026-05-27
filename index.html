@@ -2,69 +2,96 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-#app{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;width:100%;padding:12px;background:var(--color-background-tertiary);}
+body{background:#f2f2f7;margin:0;padding:0;}
+#app{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;width:100%;padding:12px;background:#f2f2f7;min-height:100vh;}
+
 .hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.hdr-title{font-size:26px;font-weight:700;color:var(--color-text-primary);}
+.hdr-title{font-size:26px;font-weight:800;color:#000;letter-spacing:-0.5px;}
 .btn-row{display:flex;gap:8px;}
-.ico-btn{height:44px;padding:0 14px;border-radius:var(--border-radius-lg);border:none;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;font-weight:600;font-family:inherit;}
-.ico-btn.imp{background:var(--color-background-primary);color:var(--color-text-primary);border:0.5px solid var(--color-border-secondary);}
+.ico-btn{height:44px;padding:0 14px;border-radius:12px;border:none;display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;font-weight:700;font-family:inherit;}
+.ico-btn.imp{background:#e5e5ea;color:#000;}
 .ico-btn.exp{background:#007aff;color:#fff;}
-.hint{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:10px 14px;font-size:13px;color:var(--color-text-secondary);margin-bottom:12px;line-height:1.5;}
-.card{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:16px;margin-bottom:12px;}
+
+.hint{background:#fff;border-radius:12px;border:1px solid #e5e5ea;padding:10px 14px;font-size:13px;color:#666;margin-bottom:12px;line-height:1.5;}
+
+.card{background:#fff;border-radius:16px;border:1px solid #e5e5ea;padding:16px;margin-bottom:12px;}
+
 .fld{margin-bottom:14px;}
-.fld-lbl{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;display:block;}
-.fld input,.fld select{width:100%;padding:14px;border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);font-size:17px;color:var(--color-text-primary);font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;}
-.fld input:focus,.fld select:focus{border-color:#007aff;}
+.fld-lbl{font-size:12px;font-weight:600;color:#666;margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:0.3px;}
+.fld input,.fld select{
+  width:100%;padding:14px;border-radius:12px;
+  border:1.5px solid #e5e5ea;
+  background:#f9f9f9;
+  font-size:17px;color:#000;
+  font-family:inherit;outline:none;
+  -webkit-appearance:none;appearance:none;
+}
+.fld input:focus,.fld select:focus{border-color:#007aff;background:#fff;}
+.fld .time-hint{font-size:11px;color:#999;margin-top:4px;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.add-btn{width:100%;padding:16px;background:#1D9E75;color:#fff;border:none;border-radius:var(--border-radius-lg);font-size:17px;font-weight:600;cursor:pointer;margin-top:4px;font-family:inherit;}
-.add-btn:active{opacity:0.85;}
-.result{display:none;margin-top:12px;background:var(--color-background-success);border:0.5px solid var(--color-border-success);border-radius:var(--border-radius-lg);padding:14px;}
+
+.add-btn{width:100%;padding:16px;background:#1D9E75;color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;margin-top:4px;font-family:inherit;}
+.add-btn:active{opacity:0.8;}
+
+.result-box{display:none;margin-top:12px;background:#e8f8f2;border:1px solid #9FE1CB;border-radius:12px;padding:14px;}
 .result-row{display:flex;}
-.res-item{flex:1;padding:0 10px;}
+.res-item{flex:1;padding:0 8px;}
 .res-item:first-child{padding-left:0;}
-.res-item+.res-item{border-left:0.5px solid var(--color-border-success);}
-.res-lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.4px;color:var(--color-text-success);margin-bottom:3px;}
-.res-val{font-size:18px;font-weight:700;color:var(--color-text-success);}
+.res-item+.res-item{border-left:1px solid #9FE1CB;}
+.res-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;color:#0F6E56;margin-bottom:3px;}
+.res-val{font-size:18px;font-weight:700;color:#0F6E56;}
+
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
-.stat{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:14px;}
-.stat-val{font-size:24px;font-weight:700;color:var(--color-text-primary);}
-.stat-lbl{font-size:12px;color:var(--color-text-secondary);margin-top:2px;}
-.sec-lbl{font-size:12px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding:0 2px;}
-.hist-wrap{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);overflow:hidden;margin-bottom:12px;}
-.entry{padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary);}
+.stat{background:#fff;border-radius:12px;border:1px solid #e5e5ea;padding:14px;}
+.stat-val{font-size:24px;font-weight:700;color:#000;}
+.stat-lbl{font-size:12px;color:#666;margin-top:2px;}
+
+.sec-lbl{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding:0 2px;}
+
+.hist-wrap{background:#fff;border-radius:16px;border:1px solid #e5e5ea;overflow:hidden;margin-bottom:12px;}
+.entry{padding:14px 16px;border-bottom:1px solid #f2f2f7;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
 .entry:last-child{border-bottom:none;}
+.entry-left{flex:1;min-width:0;}
 .e-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
-.e-date{font-size:16px;font-weight:600;color:var(--color-text-primary);}
-.e-sal{font-size:18px;font-weight:700;color:var(--color-text-primary);}
+.e-date{font-size:16px;font-weight:600;color:#000;}
+.e-sal{font-size:18px;font-weight:700;color:#000;white-space:nowrap;margin-left:8px;}
 .e-bot{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.badge{font-size:12px;font-weight:500;padding:4px 10px;border-radius:var(--border-radius-md);}
-.b-wk{background:var(--color-background-info);color:var(--color-text-info);}
+.badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:8px;}
+.b-wk{background:#dbeafe;color:#1d4ed8;}
 .b-we{background:#ede9fe;color:#5b21b6;}
-.b-ph{background:var(--color-background-warning);color:var(--color-text-warning);}
-.e-meta{font-size:13px;color:var(--color-text-secondary);}
-.del-btn{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);padding:4px 6px;font-size:20px;margin-left:auto;line-height:1;border-radius:var(--border-radius-md);}
-.del-btn:active{color:var(--color-text-danger);background:var(--color-background-danger);}
-.empty{padding:36px 16px;text-align:center;color:var(--color-text-secondary);font-size:15px;line-height:2;}
+.b-ph{background:#fef3c7;color:#92400e;}
+.e-meta{font-size:13px;color:#666;}
 
-.summary-wrap{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);overflow:hidden;margin-bottom:12px;}
+.del-btn{
+  flex-shrink:0;
+  width:36px;height:36px;
+  background:#fff0f0;border:1px solid #ffcdd2;
+  border-radius:10px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;color:#e53935;
+  font-family:inherit;
+}
+.del-btn:active{background:#ffcdd2;}
+
+.empty{padding:36px 16px;text-align:center;color:#999;font-size:15px;line-height:2;}
+
+.summary-wrap{background:#fff;border-radius:16px;border:1px solid #e5e5ea;overflow:hidden;margin-bottom:12px;}
 .sum-row{display:flex;justify-content:space-between;align-items:center;padding:16px;}
-.sum-row+.sum-row{border-top:0.5px solid var(--color-border-tertiary);}
-.sum-lbl{font-size:16px;color:var(--color-text-primary);}
-.sum-sub{font-size:13px;color:var(--color-text-secondary);margin-top:2px;}
-.sum-val{font-size:18px;font-weight:700;color:var(--color-text-primary);}
-.sum-val.red{color:var(--color-text-danger);}
-.sum-val.muted{font-size:15px;color:var(--color-text-secondary);}
+.sum-row+.sum-row{border-top:1px solid #f2f2f7;}
+.sum-lbl{font-size:16px;color:#000;}
+.sum-sub{font-size:13px;color:#666;margin-top:2px;}
+.sum-val{font-size:18px;font-weight:700;color:#000;}
+.sum-val.red{color:#e53935;}
 
-/* CPF notice banner */
-.cpf-notice{background:var(--color-background-warning);border:0.5px solid var(--color-border-warning);border-radius:var(--border-radius-lg);padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--color-text-warning);line-height:1.5;display:none;}
+.cpf-notice{background:#fff8e1;border:1px solid #ffe082;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:13px;color:#795548;line-height:1.5;display:none;}
 
-.net-bar{border-radius:var(--border-radius-lg);padding:18px;margin-bottom:12px;background:var(--color-text-primary);}
+.net-bar{border-radius:16px;padding:18px;margin-bottom:12px;background:#000;}
 .net-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
-.net-lbl{font-size:13px;font-weight:500;color:var(--color-background-secondary);text-transform:uppercase;letter-spacing:0.5px;}
-.net-sub{font-size:12px;color:var(--color-background-tertiary);}
-.net-amt{font-size:32px;font-weight:800;color:var(--color-background-primary);letter-spacing:-1px;}
+.net-lbl{font-size:13px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;}
+.net-sub{font-size:12px;color:#666;}
+.net-amt{font-size:32px;font-weight:800;color:#fff;letter-spacing:-1px;}
 
-.toast{background:var(--color-text-primary);color:var(--color-background-primary);border-radius:var(--border-radius-lg);padding:12px 16px;text-align:center;font-size:14px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;margin-bottom:8px;}
+.toast{background:#333;color:#fff;border-radius:12px;padding:12px 16px;text-align:center;font-size:14px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;margin-bottom:8px;}
 .toast.on{opacity:1;}
 </style>
 
@@ -72,13 +99,13 @@
   <div class="hdr">
     <span class="hdr-title">💰 Salary</span>
     <div class="btn-row">
-      <button class="ico-btn imp" onclick="document.getElementById('fi').click()"><i class="ti ti-upload" aria-hidden="true"></i> Import</button>
-      <button class="ico-btn exp" onclick="exportExcel()"><i class="ti ti-download" aria-hidden="true"></i> Export</button>
+      <button class="ico-btn imp" onclick="document.getElementById('fi').click()">⬆ Import</button>
+      <button class="ico-btn exp" onclick="exportExcel()">⬇ Export</button>
     </div>
   </div>
   <input type="file" id="fi" accept=".xlsx" style="display:none" onchange="importExcel(event)">
 
-  <div class="hint"><i class="ti ti-info-circle" aria-hidden="true"></i> Import a previous month's file to continue, or start fresh and export when done.</div>
+  <div class="hint">ℹ️ Import a previous month's file to continue, or start fresh and export when done.</div>
 
   <div class="card">
     <div class="fld">
@@ -88,24 +115,30 @@
     <div class="fld">
       <span class="fld-lbl">Day type</span>
       <select id="i-type">
-        <option value="13">📅 Weekday — $13/hr</option>
-        <option value="16">🗓️ Weekend — $16/hr</option>
-        <option value="19.5">🎉 Public Holiday — $19.50/hr</option>
+        <option value="13">Weekday — $13/hr</option>
+        <option value="16">Weekend — $16/hr</option>
+        <option value="19.5">Public Holiday — $19.50/hr</option>
       </select>
     </div>
     <div class="fld">
       <span class="fld-lbl">Working hours</span>
       <div class="row2">
-        <input type="time" id="i-start">
-        <input type="time" id="i-end">
+        <div>
+          <input type="text" id="i-start" placeholder="e.g. 0930" maxlength="4" inputmode="numeric">
+          <div class="time-hint">Start (HHMM, 24hr)</div>
+        </div>
+        <div>
+          <input type="text" id="i-end" placeholder="e.g. 2300" maxlength="4" inputmode="numeric">
+          <div class="time-hint">End (HHMM, 24hr)</div>
+        </div>
       </div>
     </div>
     <div class="fld">
       <span class="fld-lbl">Break time (hours)</span>
       <input type="number" id="i-brk" min="0" step="0.25" value="0" inputmode="decimal">
     </div>
-    <button class="add-btn" onclick="addEntry()"><i class="ti ti-plus" aria-hidden="true"></i> Add Entry</button>
-    <div class="result" id="result">
+    <button class="add-btn" onclick="addEntry()">+ Add Entry</button>
+    <div class="result-box" id="result">
       <div class="result-row">
         <div class="res-item"><div class="res-lbl">Worked</div><div class="res-val" id="r-hrs">—</div></div>
         <div class="res-item"><div class="res-lbl">Break</div><div class="res-val" id="r-brk">—</div></div>
@@ -119,13 +152,11 @@
     <div class="stat"><div class="stat-val" id="s-hrs">0h</div><div class="stat-lbl">Total hours</div></div>
   </div>
 
-  <div class="cpf-notice" id="cpf-notice">
-    <i class="ti ti-alert-triangle" aria-hidden="true"></i> <strong>CPF not applicable yet</strong> — CPF deduction only applies when total salary exceeds $500. Keep adding shifts!
-  </div>
+  <div class="cpf-notice" id="cpf-notice">⚠️ CPF not applicable yet — deduction only applies when total salary exceeds $500.</div>
 
   <div class="sec-lbl" id="hist-lbl" style="display:none">History</div>
   <div class="hist-wrap"><div id="hist">
-    <div class="empty"><i class="ti ti-clipboard" style="font-size:28px;display:block;margin-bottom:8px" aria-hidden="true"></i>No entries yet.<br>Add a shift above or import a file.</div>
+    <div class="empty">📋<br>No entries yet.<br>Add a shift above or import a file.</div>
   </div></div>
 
   <div class="summary-wrap" id="sum-wrap" style="display:none">
@@ -133,10 +164,10 @@
       <div><div class="sum-lbl">Total salary</div></div>
       <div class="sum-val" id="sum-gross">$0.00</div>
     </div>
-    <div class="sum-row" id="cpf-row">
+    <div class="sum-row" id="cpf-row" style="display:none">
       <div>
         <div class="sum-lbl">CPF deduction</div>
-        <div class="sum-sub" id="cpf-sub">20% employee contribution</div>
+        <div class="sum-sub">20% employee contribution</div>
       </div>
       <div class="sum-val red" id="sum-cpf">−$0.00</div>
     </div>
@@ -154,26 +185,41 @@
 </div>
 
 <script>
-const CPF_THRESHOLD=500,CPF_RATE=0.20;
+const CPF_THRESHOLD=500, CPF_RATE=0.20;
 let recs=[];
 
 (function(){
-  const d=new Date(),pad=n=>String(n).padStart(2,'0');
+  const d=new Date(), pad=n=>String(n).padStart(2,'0');
   document.getElementById('i-date').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
   render();
 })();
 
-function calcH(s,e){
-  const[sh,sm]=s.split(':').map(Number),[eh,em]=e.split(':').map(Number);
-  let a=sh*60+sm,b=eh*60+em;if(b<=a)b+=1440;return(b-a)/60;
+// Parse "HHMM" string → total minutes
+function parseTime(str){
+  str=(str||'').replace(/\D/g,'').padStart(4,'0');
+  const h=parseInt(str.slice(0,2),10);
+  const m=parseInt(str.slice(2,4),10);
+  if(h>23||m>59)return null;
+  return h*60+m;
+}
+
+function fmtTimeStr(str){
+  str=(str||'').replace(/\D/g,'').padStart(4,'0');
+  return str.slice(0,2)+':'+str.slice(2,4);
+}
+
+function calcH(startMins, endMins){
+  if(endMins<=startMins) endMins+=1440;
+  return(endMins-startMins)/60;
 }
 
 function fmtD(str){
-  if(!str)return'';const[y,m,d]=str.split('-');
+  if(!str)return'';
+  const[y,m,d]=str.split('-');
   return`${d} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]} ${y}`;
 }
 
-function typeOf(rate){
+function rateLabel(rate){
   const v=parseFloat(rate);
   if(v===13)return['Weekday','b-wk'];
   if(v===16)return['Weekend','b-we'];
@@ -182,29 +228,47 @@ function typeOf(rate){
 
 function toast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('on');
+  t.textContent=msg; t.classList.add('on');
   setTimeout(()=>t.classList.remove('on'),2200);
 }
 
 function addEntry(){
   const date=document.getElementById('i-date').value;
-  const s=document.getElementById('i-start').value;
-  const e=document.getElementById('i-end').value;
+  const sRaw=document.getElementById('i-start').value.trim();
+  const eRaw=document.getElementById('i-end').value.trim();
   const brk=parseFloat(document.getElementById('i-brk').value)||0;
   const rate=parseFloat(document.getElementById('i-type').value);
-  if(!date||!s||!e){alert('Please fill in date, start time and end time.');return;}
-  const raw=calcH(s,e),hrs=Math.max(0,raw-brk),earn=hrs*rate;
-  recs.unshift({id:Date.now(),date,s,e,brk,rate,hrs,earn});
-  const rs=document.getElementById('result');rs.style.display='block';
+
+  if(!date){alert('Please select a date.');return;}
+  const sMins=parseTime(sRaw);
+  const eMins=parseTime(eRaw);
+  if(sMins===null||sRaw.length<3){alert('Please enter a valid start time (e.g. 0930 or 1430).');return;}
+  if(eMins===null||eRaw.length<3){alert('Please enter a valid end time (e.g. 1800 or 2300).');return;}
+
+  const raw=calcH(sMins,eMins);
+  const hrs=Math.max(0,raw-brk);
+  const earn=hrs*rate;
+
+  // store the formatted HH:MM for display/export
+  const sStr=fmtTimeStr(sRaw);
+  const eStr=fmtTimeStr(eRaw);
+
+  recs.unshift({id:Date.now(),date,s:sStr,e:eStr,brk,rate,hrs,earn});
+
+  const rs=document.getElementById('result');
+  rs.style.display='block';
   document.getElementById('r-hrs').textContent=`${raw.toFixed(2)}h`;
   document.getElementById('r-brk').textContent=brk>0?`-${brk.toFixed(2)}h`:'0h';
   document.getElementById('r-earn').textContent=`$${earn.toFixed(2)}`;
-  render();toast('✅ Entry added!');
+
+  render();
+  toast('✅ Entry added!');
 }
 
 function del(id){
   if(!confirm('Delete this entry?'))return;
-  recs=recs.filter(r=>r.id!==id);render();
+  recs=recs.filter(r=>r.id!==id);
+  render();
 }
 
 function render(){
@@ -217,28 +281,35 @@ function render(){
   const cpfRow=document.getElementById('cpf-row');
 
   if(!recs.length){
-    hist.innerHTML='<div class="empty"><i class="ti ti-clipboard" style="font-size:28px;display:block;margin-bottom:8px" aria-hidden="true"></i>No entries yet.<br>Add a shift above or import a file.</div>';
-    sg.style.display='none';sw.style.display='none';nb.style.display='none';
-    hl.style.display='none';notice.style.display='none';return;
+    hist.innerHTML='<div class="empty">📋<br>No entries yet.<br>Add a shift above or import a file.</div>';
+    sg.style.display='none'; sw.style.display='none'; nb.style.display='none';
+    hl.style.display='none'; notice.style.display='none'; return;
   }
 
-  sg.style.display='grid';sw.style.display='block';nb.style.display='block';hl.style.display='block';
+  sg.style.display='grid'; sw.style.display='block'; nb.style.display='block'; hl.style.display='block';
 
-  let tot=0,totH=0,html='';
+  let tot=0, totH=0, html='';
   recs.forEach(r=>{
-    tot+=parseFloat(r.earn);totH+=parseFloat(r.hrs);
-    const[lbl,cls]=typeOf(r.rate);
+    const earn=parseFloat(r.earn)||0;
+    const hrs=parseFloat(r.hrs)||0;
+    const rate=parseFloat(r.rate)||0;
+    tot+=earn; totH+=hrs;
+    const[lbl,cls]=rateLabel(rate);
+    const rateDisp=rate===19.5?'$19.50':`$${rate}`;
     html+=`<div class="entry">
-      <div class="e-top">
-        <span class="e-date">${fmtD(r.date)}</span>
-        <span class="e-sal">$${parseFloat(r.earn).toFixed(2)}</span>
+      <div class="entry-left">
+        <div class="e-top">
+          <span class="e-date">${fmtD(r.date)}</span>
+          <span class="e-sal">$${earn.toFixed(2)}</span>
+        </div>
+        <div class="e-bot">
+          <span class="badge ${cls}">${lbl}</span>
+          <span class="e-meta">${hrs.toFixed(2)}h · ${rateDisp}/hr</span>
+          <span class="e-meta">${r.s}–${r.e}</span>
+          ${r.brk>0?`<span class="e-meta">−${parseFloat(r.brk).toFixed(2)}h break</span>`:''}
+        </div>
       </div>
-      <div class="e-bot">
-        <span class="badge ${cls}">${lbl}</span>
-        <span class="e-meta">${parseFloat(r.hrs).toFixed(2)}h · $${parseFloat(r.rate)}/hr</span>
-        ${r.brk>0?`<span class="e-meta">− ${parseFloat(r.brk).toFixed(2)}h break</span>`:''}
-        <button class="del-btn" onclick="del(${r.id})" aria-label="Delete entry"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      </div>
+      <button class="del-btn" onclick="del(${r.id})">🗑</button>
     </div>`;
   });
   hist.innerHTML=html;
@@ -251,20 +322,14 @@ function render(){
   const cpf=cpfApplies?tot*CPF_RATE:0;
   const net=tot-cpf;
 
-  // CPF notice banner — show only when below threshold
   notice.style.display=cpfApplies?'none':'block';
-
-  // CPF row in summary
+  cpfRow.style.display=cpfApplies?'flex':'none';
   if(cpfApplies){
-    cpfRow.style.display='flex';
     document.getElementById('sum-cpf').textContent=`−$${cpf.toFixed(2)}`;
-    document.getElementById('cpf-sub').textContent='20% employee contribution';
     document.getElementById('net-sub').textContent='after CPF 20%';
   } else {
-    cpfRow.style.display='none';
     document.getElementById('net-sub').textContent='CPF not applicable (below $500)';
   }
-
   document.getElementById('net-amt').textContent=`$${net.toFixed(2)}`;
 }
 
@@ -272,34 +337,39 @@ function exportExcel(){
   if(!recs.length){alert('No entries to export.');return;}
   const wb=XLSX.utils.book_new();
   const rows=[['ID','Date','Start','End','Break (hrs)','Rate ($/hr)','Hours','Salary ($)','Type']];
-  recs.forEach(r=>{const[lbl]=typeOf(r.rate);rows.push([r.id,r.date,r.s,r.e,+r.brk,+r.rate,+parseFloat(r.hrs).toFixed(2),+parseFloat(r.earn).toFixed(2),lbl]);});
+  recs.forEach(r=>{
+    const[lbl]=rateLabel(r.rate);
+    const rate=parseFloat(r.rate)||0;
+    rows.push([r.id,r.date,r.s,r.e,parseFloat(r.brk)||0,rate,parseFloat(parseFloat(r.hrs).toFixed(2)),parseFloat(parseFloat(r.earn).toFixed(2)),lbl]);
+  });
   const ws=XLSX.utils.aoa_to_sheet(rows);
   ws['!cols']=[16,12,8,8,12,12,10,12,12].map(w=>({wch:w}));
   XLSX.utils.book_append_sheet(wb,ws,'Records');
 
   const sorted=[...recs].sort((a,b)=>a.date.localeCompare(b.date));
-  const tot=recs.reduce((s,r)=>s+parseFloat(r.earn),0);
-  const totH=recs.reduce((s,r)=>s+parseFloat(r.hrs),0);
+  const tot=recs.reduce((s,r)=>s+(parseFloat(r.earn)||0),0);
+  const totH=recs.reduce((s,r)=>s+(parseFloat(r.hrs)||0),0);
   const cpfApplies=tot>CPF_THRESHOLD;
   const cpf=cpfApplies?tot*CPF_RATE:0;
   const net=tot-cpf;
-  const fd=sorted[0]?.date||'',ld=sorted[sorted.length-1]?.date||'';
+  const fd=sorted[0]?.date||'', ld=sorted[sorted.length-1]?.date||'';
 
   const sum=[
     ['SALARY REPORT'],[''],
     ['Period',`${fmtD(fd)} – ${fmtD(ld)}`],
     ['Generated',new Date().toLocaleDateString('en-MY')],[''],
-    ['Total shifts',recs.length],['Total hours',+totH.toFixed(2)],[''],
-    ['Gross salary ($)',+tot.toFixed(2)],
-    ['CPF deduction ($)',cpfApplies?+cpf.toFixed(2):'Not applicable (below $500)'],
-    ['Net salary ($)',+net.toFixed(2)],[''],
-    ['Weekday shifts',recs.filter(r=>+r.rate===13).length],
-    ['Weekend shifts',recs.filter(r=>+r.rate===16).length],
-    ['Public holiday shifts',recs.filter(r=>+r.rate===19.5).length],
+    ['Total shifts',recs.length],['Total hours',parseFloat(totH.toFixed(2))],[''],
+    ['Gross salary ($)',parseFloat(tot.toFixed(2))],
+    ['CPF deduction ($)',cpfApplies?parseFloat(cpf.toFixed(2)):'Not applicable (below $500)'],
+    ['Net salary ($)',parseFloat(net.toFixed(2))],[''],
+    ['Weekday shifts',recs.filter(r=>parseFloat(r.rate)===13).length],
+    ['Weekend shifts',recs.filter(r=>parseFloat(r.rate)===16).length],
+    ['Public holiday shifts',recs.filter(r=>parseFloat(r.rate)===19.5).length],
   ];
   const ws2=XLSX.utils.aoa_to_sheet(sum);
   ws2['!cols']=[{wch:28},{wch:30}];
   XLSX.utils.book_append_sheet(wb,ws2,'Summary');
+
   const d=new Date(fd);
   const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   XLSX.writeFile(wb,`Salary_${mo[d.getMonth()]}_${d.getFullYear()}.xlsx`);
@@ -307,7 +377,7 @@ function exportExcel(){
 }
 
 function importExcel(ev){
-  const file=ev.target.files[0];if(!file)return;
+  const file=ev.target.files[0]; if(!file)return;
   const fr=new FileReader();
   fr.onload=function(e){
     try{
@@ -319,13 +389,21 @@ function importExcel(ev){
       for(let i=1;i<rows.length;i++){
         const[id,date,s,e2,brk,rate,hrs,earn]=rows[i];
         if(!date||!s||!e2)continue;
-        imp.push({id:id||Date.now()+i,date,s,e:e2,brk:+brk||0,rate:+rate,hrs:+hrs,earn:+earn});
+        imp.push({
+          id:id||Date.now()+i, date,
+          s:String(s), e:String(e2),
+          brk:parseFloat(brk)||0,
+          rate:parseFloat(rate)||13,
+          hrs:parseFloat(hrs)||0,
+          earn:parseFloat(earn)||0
+        });
       }
       if(!imp.length){alert('No valid records found.');return;}
-      recs=imp;document.getElementById('result').style.display='none';
-      render();toast(`📥 Imported ${imp.length} entries`);
+      recs=imp;
+      document.getElementById('result').style.display='none';
+      render(); toast(`📥 Imported ${imp.length} entries`);
     }catch(err){alert('Could not read the file.');}
   };
-  fr.readAsBinaryString(file);ev.target.value='';
+  fr.readAsBinaryString(file); ev.target.value='';
 }
 </script>
