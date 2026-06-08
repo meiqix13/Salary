@@ -13,18 +13,15 @@ body{background:#f2f2f7;margin:0;padding:0;}
 .hint{background:#fff;border-radius:12px;border:1px solid #e5e5ea;padding:10px 14px;font-size:13px;color:#666;margin-bottom:12px;line-height:1.5;}
 .card{background:#fff;border-radius:16px;border:1px solid #e5e5ea;padding:16px;margin-bottom:12px;}
 .fld{margin-bottom:14px;}
+.fld:last-child{margin-bottom:0;}
 .fld-lbl{font-size:12px;font-weight:600;color:#666;margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:0.3px;}
 .fld input,.fld select{width:100%;padding:14px;border-radius:12px;border:1.5px solid #e5e5ea;background:#f9f9f9;font-size:17px;color:#000;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;}
 .fld input:focus,.fld select:focus{border-color:#007aff;background:#fff;}
 .time-hint{font-size:11px;color:#999;margin-top:4px;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-
-/* auto-detect badge shown under day type */
 .day-auto{display:none;margin-top:6px;font-size:12px;font-weight:600;padding:5px 10px;border-radius:8px;text-align:center;}
 .day-auto.weekday{background:#dbeafe;color:#1d4ed8;}
 .day-auto.weekend{background:#ede9fe;color:#5b21b6;}
-.day-auto.ph{background:#fef3c7;color:#92400e;}
-
 .add-btn{width:100%;padding:16px;background:#1D9E75;color:#fff;border:none;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;margin-top:4px;font-family:inherit;}
 .add-btn:active{opacity:0.8;}
 .result-box{display:none;margin-top:12px;background:#e8f8f2;border:1px solid #9FE1CB;border-radius:12px;padding:14px;}
@@ -40,20 +37,36 @@ body{background:#f2f2f7;margin:0;padding:0;}
 .stat-lbl{font-size:12px;color:#666;margin-top:2px;}
 .sec-lbl{font-size:12px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding:0 2px;}
 .hist-wrap{background:#fff;border-radius:16px;border:1px solid #e5e5ea;overflow:hidden;margin-bottom:12px;}
-.entry{padding:14px 16px;border-bottom:1px solid #f2f2f7;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+
+/* entry normal view */
+.entry{padding:14px 16px;border-bottom:1px solid #f2f2f7;}
 .entry:last-child{border-bottom:none;}
-.entry-left{flex:1;min-width:0;}
-.e-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.entry-top-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
 .e-date{font-size:16px;font-weight:600;color:#000;}
 .e-sal{font-size:18px;font-weight:700;color:#000;white-space:nowrap;margin-left:8px;}
-.e-bot{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.e-bot{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
 .badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:8px;}
 .b-wk{background:#dbeafe;color:#1d4ed8;}
 .b-we{background:#ede9fe;color:#5b21b6;}
 .b-ph{background:#fef3c7;color:#92400e;}
 .e-meta{font-size:13px;color:#666;}
-.del-btn{flex-shrink:0;width:36px;height:36px;background:#fff0f0;border:1px solid #ffcdd2;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:#e53935;font-family:inherit;}
-.del-btn:active{background:#ffcdd2;}
+.entry-actions{display:flex;gap:8px;}
+.act-btn{flex:1;padding:8px;border-radius:10px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.act-btn.edit{background:#e8f0fe;color:#1a73e8;}
+.act-btn.edit:active{background:#c5d8fc;}
+.act-btn.del{background:#fff0f0;color:#e53935;border:1px solid #ffcdd2;}
+.act-btn.del:active{background:#ffcdd2;}
+
+/* edit mode inside entry */
+.edit-card{background:#f0f7ff;border-radius:12px;padding:12px;margin-top:8px;display:none;}
+.edit-card .fld{margin-bottom:10px;}
+.edit-card .fld:last-child{margin-bottom:0;}
+.edit-card .fld-lbl{font-size:11px;}
+.edit-card .fld input,.edit-card .fld select{font-size:15px;padding:10px 12px;border-radius:10px;}
+.edit-actions{display:flex;gap:8px;margin-top:10px;}
+.save-btn{flex:1;padding:11px;background:#1D9E75;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+.cancel-btn{flex:1;padding:11px;background:#e5e5ea;color:#000;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;}
+
 .empty{padding:36px 16px;text-align:center;color:#999;font-size:15px;line-height:2;}
 .summary-wrap{background:#fff;border-radius:16px;border:1px solid #e5e5ea;overflow:hidden;margin-bottom:12px;}
 .sum-row{display:flex;justify-content:space-between;align-items:center;padding:16px;}
@@ -68,16 +81,45 @@ body{background:#f2f2f7;margin:0;padding:0;}
 .net-lbl{font-size:13px;font-weight:600;color:#aaa;text-transform:uppercase;letter-spacing:0.5px;}
 .net-sub{font-size:12px;color:#666;}
 .net-amt{font-size:32px;font-weight:800;color:#fff;letter-spacing:-1px;}
+
+/* export modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:100;align-items:flex-end;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:#fff;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;}
+.modal h3{font-size:18px;font-weight:700;margin-bottom:4px;color:#000;}
+.modal p{font-size:13px;color:#666;margin-bottom:14px;}
+.modal input{width:100%;padding:13px 14px;border-radius:12px;border:1.5px solid #e5e5ea;background:#f9f9f9;font-size:16px;color:#000;font-family:inherit;outline:none;margin-bottom:12px;}
+.modal input:focus{border-color:#007aff;background:#fff;}
+.modal-ext{font-size:12px;color:#999;margin-top:-8px;margin-bottom:14px;padding-left:4px;}
+.modal-btns{display:flex;gap:10px;}
+.modal-btn{flex:1;padding:14px;border-radius:12px;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;}
+.modal-btn.confirm{background:#007aff;color:#fff;}
+.modal-btn.cancel{background:#e5e5ea;color:#000;}
+
 .toast{background:#333;color:#fff;border-radius:12px;padding:12px 16px;text-align:center;font-size:14px;font-weight:500;opacity:0;transition:opacity 0.3s;pointer-events:none;margin-bottom:8px;}
 .toast.on{opacity:1;}
 </style>
+
+<!-- Export filename modal -->
+<div class="modal-overlay" id="export-modal">
+  <div class="modal">
+    <h3>Export Excel</h3>
+    <p>Enter a filename for your report:</p>
+    <input type="text" id="export-filename" placeholder="e.g. Salary_June_2026">
+    <div class="modal-ext">.xlsx will be added automatically</div>
+    <div class="modal-btns">
+      <button class="modal-btn cancel" onclick="closeExportModal()">Cancel</button>
+      <button class="modal-btn confirm" onclick="confirmExport()">Export</button>
+    </div>
+  </div>
+</div>
 
 <div id="app">
   <div class="hdr">
     <span class="hdr-title">💰 Salary</span>
     <div class="btn-row">
       <button class="ico-btn imp" onclick="document.getElementById('fi').click()">⬆ Import</button>
-      <button class="ico-btn exp" onclick="exportExcel()">⬇ Export</button>
+      <button class="ico-btn exp" onclick="openExportModal()">⬇ Export</button>
     </div>
   </div>
   <input type="file" id="fi" accept=".xlsx" style="display:none" onchange="importExcel(event)">
@@ -106,14 +148,14 @@ body{background:#f2f2f7;margin:0;padding:0;}
           <div class="time-hint">Start (HHMM, 24hr)</div>
         </div>
         <div>
-          <input type="text" id="i-end" placeholder="e.g. 2300" maxlength="4" inputmode="numeric">
+          <input type="text" id="i-end" placeholder="e.g. 2300" maxlength="4" inputmode="numeric" value="2300">
           <div class="time-hint">End (HHMM, 24hr)</div>
         </div>
       </div>
     </div>
     <div class="fld">
       <span class="fld-lbl">Break time (hours)</span>
-      <input type="number" id="i-brk" min="0" step="0.25" value="0" inputmode="decimal">
+      <input type="text" id="i-brk" placeholder="e.g. 0.5" inputmode="decimal">
     </div>
     <button class="add-btn" onclick="addEntry()">+ Add Entry</button>
     <div class="result-box" id="result">
@@ -163,11 +205,12 @@ body{background:#f2f2f7;margin:0;padding:0;}
 </div>
 
 <script>
-const CPF_THRESHOLD=500, CPF_RATE=0.20;
+const CPF_THRESHOLD=500,CPF_RATE=0.20;
 let recs=[];
+let editingId=null;
 
 (function(){
-  const d=new Date(), pad=n=>String(n).padStart(2,'0');
+  const d=new Date(),pad=n=>String(n).padStart(2,'0');
   document.getElementById('i-date').value=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
   onDateChange();
   render();
@@ -178,22 +221,17 @@ function onDateChange(){
   const badge=document.getElementById('day-auto');
   const sel=document.getElementById('i-type');
   if(!val){badge.style.display='none';return;}
-
-  // Use noon to avoid timezone edge cases
   const d=new Date(val+'T12:00:00');
-  const day=d.getDay(); // 0=Sun,6=Sat,5=Fri etc.
-
+  const day=d.getDay();
   const isWeekend=(day===0||day===6);
-  const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const name=dayNames[day];
-
+  const names=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   if(isWeekend){
     sel.value='16';
-    badge.textContent=`${name} detected → Weekend rate ($16/hr) applied`;
+    badge.textContent=`${names[day]} → Weekend rate ($16/hr) applied`;
     badge.className='day-auto weekend';
   } else {
     sel.value='13';
-    badge.textContent=`${name} detected → Weekday rate ($13/hr) applied`;
+    badge.textContent=`${names[day]} → Weekday rate ($13/hr) applied`;
     badge.className='day-auto weekday';
   }
   badge.style.display='block';
@@ -201,8 +239,7 @@ function onDateChange(){
 
 function parseTime(str){
   str=(str||'').replace(/\D/g,'').padStart(4,'0');
-  const h=parseInt(str.slice(0,2),10);
-  const m=parseInt(str.slice(2,4),10);
+  const h=parseInt(str.slice(0,2),10),m=parseInt(str.slice(2,4),10);
   if(h>23||m>59)return null;
   return h*60+m;
 }
@@ -212,10 +249,7 @@ function fmtTimeStr(str){
   return str.slice(0,2)+':'+str.slice(2,4);
 }
 
-function calcH(sMins,eMins){
-  if(eMins<=sMins)eMins+=1440;
-  return(eMins-sMins)/60;
-}
+function calcH(s,e){if(e<=s)e+=1440;return(e-s)/60;}
 
 function fmtD(str){
   if(!str)return'';
@@ -232,7 +266,7 @@ function rateLabel(rate){
 
 function toast(msg){
   const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('on');
+  t.textContent=msg;t.classList.add('on');
   setTimeout(()=>t.classList.remove('on'),2200);
 }
 
@@ -240,42 +274,61 @@ function addEntry(){
   const date=document.getElementById('i-date').value;
   const sRaw=document.getElementById('i-start').value.trim();
   const eRaw=document.getElementById('i-end').value.trim();
-  const brk=parseFloat(document.getElementById('i-brk').value)||0;
+  const brkRaw=document.getElementById('i-brk').value.trim();
+  const brk=parseFloat(brkRaw)||0;
   const rate=parseFloat(document.getElementById('i-type').value);
-
   if(!date){alert('Please select a date.');return;}
-  const sMins=parseTime(sRaw);
-  const eMins=parseTime(eRaw);
-  if(sMins===null||sRaw.length<3){alert('Please enter a valid start time (e.g. 0930 or 1430).');return;}
-  if(eMins===null||eRaw.length<3){alert('Please enter a valid end time (e.g. 1800 or 2300).');return;}
-
-  const raw=calcH(sMins,eMins);
-  const hrs=Math.max(0,raw-brk);
-  const earn=hrs*rate;
-  const sStr=fmtTimeStr(sRaw);
-  const eStr=fmtTimeStr(eRaw);
-
-  recs.unshift({id:Date.now(),date,s:sStr,e:eStr,brk,rate,hrs,earn});
-
-  const rs=document.getElementById('result');
-  rs.style.display='block';
+  const sMins=parseTime(sRaw),eMins=parseTime(eRaw);
+  if(sMins===null||sRaw.length<3){alert('Please enter a valid start time e.g. 0930');return;}
+  if(eMins===null||eRaw.length<3){alert('Please enter a valid end time e.g. 2300');return;}
+  const raw=calcH(sMins,eMins),hrs=Math.max(0,raw-brk),earn=hrs*rate;
+  recs.push({id:Date.now(),date,s:fmtTimeStr(sRaw),e:fmtTimeStr(eRaw),brk,rate,hrs,earn});
+  const rs=document.getElementById('result');rs.style.display='block';
   document.getElementById('r-hrs').textContent=`${raw.toFixed(2)}h`;
   document.getElementById('r-brk').textContent=brk>0?`-${brk.toFixed(2)}h`:'0h';
   document.getElementById('r-earn').textContent=`$${earn.toFixed(2)}`;
-
-  // clear time inputs for next entry
   document.getElementById('i-start').value='';
-  document.getElementById('i-end').value='';
-  document.getElementById('i-brk').value='0';
+  document.getElementById('i-end').value='2300';
+  document.getElementById('i-brk').value='';
+  render();toast('✅ Entry added!');
+}
 
-  render();
-  toast('✅ Entry added!');
+function toggleEdit(id){
+  // close any open edit first
+  if(editingId&&editingId!==id){
+    const prev=document.getElementById('edit-'+editingId);
+    if(prev)prev.style.display='none';
+  }
+  editingId=(editingId===id)?null:id;
+  const card=document.getElementById('edit-'+id);
+  if(card)card.style.display=editingId===id?'block':'none';
+}
+
+function saveEdit(id){
+  const r=recs.find(r=>r.id===id);if(!r)return;
+  const date=document.getElementById('ed-date-'+id).value;
+  const sRaw=document.getElementById('ed-start-'+id).value.trim();
+  const eRaw=document.getElementById('ed-end-'+id).value.trim();
+  const brk=parseFloat(document.getElementById('ed-brk-'+id).value)||0;
+  const rate=parseFloat(document.getElementById('ed-rate-'+id).value);
+  if(!date){alert('Please select a date.');return;}
+  const sMins=parseTime(sRaw),eMins=parseTime(eRaw);
+  if(sMins===null||sRaw.length<3){alert('Invalid start time.');return;}
+  if(eMins===null||eRaw.length<3){alert('Invalid end time.');return;}
+  const raw=calcH(sMins,eMins),hrs=Math.max(0,raw-brk),earn=hrs*rate;
+  r.date=date;r.s=fmtTimeStr(sRaw);r.e=fmtTimeStr(eRaw);r.brk=brk;r.rate=rate;r.hrs=hrs;r.earn=earn;
+  editingId=null;
+  render();toast('✏️ Entry updated!');
 }
 
 function del(id){
   if(!confirm('Delete this entry?'))return;
   recs=recs.filter(r=>r.id!==id);
-  render();
+  render();toast('🗑 Entry deleted');
+}
+
+function sortedRecs(){
+  return [...recs].sort((a,b)=>b.date.localeCompare(a.date));
 }
 
 function render(){
@@ -296,27 +349,61 @@ function render(){
   sg.style.display='grid';sw.style.display='block';nb.style.display='block';hl.style.display='block';
 
   let tot=0,totH=0,html='';
-  recs.forEach(r=>{
-    const earn=parseFloat(r.earn)||0;
-    const hrs=parseFloat(r.hrs)||0;
-    const rate=parseFloat(r.rate)||0;
+  const sorted=sortedRecs();
+  sorted.forEach(r=>{
+    const earn=parseFloat(r.earn)||0,hrs=parseFloat(r.hrs)||0,rate=parseFloat(r.rate)||0;
     tot+=earn;totH+=hrs;
     const[lbl,cls]=rateLabel(rate);
     const rateDisp=rate===19.5?'$19.50':`$${rate}`;
+    const sRaw=r.s.replace(':',''),eRaw=r.e.replace(':','');
+    const isEditing=editingId===r.id;
     html+=`<div class="entry">
-      <div class="entry-left">
-        <div class="e-top">
-          <span class="e-date">${fmtD(r.date)}</span>
-          <span class="e-sal">$${earn.toFixed(2)}</span>
+      <div class="entry-top-row">
+        <span class="e-date">${fmtD(r.date)}</span>
+        <span class="e-sal">$${earn.toFixed(2)}</span>
+      </div>
+      <div class="e-bot">
+        <span class="badge ${cls}">${lbl}</span>
+        <span class="e-meta">${hrs.toFixed(2)}h · ${rateDisp}/hr</span>
+        <span class="e-meta">${r.s}–${r.e}</span>
+        ${r.brk>0?`<span class="e-meta">−${parseFloat(r.brk).toFixed(2)}h break</span>`:''}
+      </div>
+      <div class="entry-actions">
+        <button class="act-btn edit" onclick="toggleEdit(${r.id})">${isEditing?'▲ Close':'✏️ Edit'}</button>
+        <button class="act-btn del" onclick="del(${r.id})">🗑 Delete</button>
+      </div>
+      <div class="edit-card" id="edit-${r.id}" style="display:${isEditing?'block':'none'}">
+        <div class="fld">
+          <span class="fld-lbl">Date</span>
+          <input type="date" id="ed-date-${r.id}" value="${r.date}">
         </div>
-        <div class="e-bot">
-          <span class="badge ${cls}">${lbl}</span>
-          <span class="e-meta">${hrs.toFixed(2)}h · ${rateDisp}/hr</span>
-          <span class="e-meta">${r.s}–${r.e}</span>
-          ${r.brk>0?`<span class="e-meta">−${parseFloat(r.brk).toFixed(2)}h break</span>`:''}
+        <div class="fld">
+          <span class="fld-lbl">Day type</span>
+          <select id="ed-rate-${r.id}">
+            <option value="13" ${rate===13?'selected':''}>Weekday — $13/hr</option>
+            <option value="16" ${rate===16?'selected':''}>Weekend — $16/hr</option>
+            <option value="19.5" ${rate===19.5?'selected':''}>Public Holiday — $19.50/hr</option>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="fld">
+            <span class="fld-lbl">Start</span>
+            <input type="text" id="ed-start-${r.id}" value="${sRaw}" maxlength="4" inputmode="numeric">
+          </div>
+          <div class="fld">
+            <span class="fld-lbl">End</span>
+            <input type="text" id="ed-end-${r.id}" value="${eRaw}" maxlength="4" inputmode="numeric">
+          </div>
+        </div>
+        <div class="fld">
+          <span class="fld-lbl">Break (hrs)</span>
+          <input type="text" id="ed-brk-${r.id}" value="${r.brk||''}" placeholder="e.g. 0.5" inputmode="decimal">
+        </div>
+        <div class="edit-actions">
+          <button class="cancel-btn" onclick="toggleEdit(${r.id})">Cancel</button>
+          <button class="save-btn" onclick="saveEdit(${r.id})">Save changes</button>
         </div>
       </div>
-      <button class="del-btn" onclick="del(${r.id})">🗑</button>
     </div>`;
   });
   hist.innerHTML=html;
@@ -328,7 +415,6 @@ function render(){
   const cpfApplies=tot>CPF_THRESHOLD;
   const cpf=cpfApplies?tot*CPF_RATE:0;
   const net=tot-cpf;
-
   notice.style.display=cpfApplies?'none':'block';
   cpfRow.style.display=cpfApplies?'flex':'none';
   if(cpfApplies){
@@ -340,11 +426,29 @@ function render(){
   document.getElementById('net-amt').textContent=`$${net.toFixed(2)}`;
 }
 
-function exportExcel(){
+/* Export modal */
+function openExportModal(){
   if(!recs.length){alert('No entries to export.');return;}
+  const sorted=sortedRecs();
+  const d=new Date(sorted[sorted.length-1].date);
+  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  document.getElementById('export-filename').value=`Salary_${mo[d.getMonth()]}_${d.getFullYear()}`;
+  document.getElementById('export-modal').classList.add('show');
+  setTimeout(()=>document.getElementById('export-filename').focus(),100);
+}
+function closeExportModal(){document.getElementById('export-modal').classList.remove('show');}
+
+function confirmExport(){
+  let fname=(document.getElementById('export-filename').value||'Salary_Export').trim();
+  fname=fname.replace(/\.xlsx$/i,'');
+  closeExportModal();
+  doExport(fname+'.xlsx');
+}
+
+function doExport(filename){
   const wb=XLSX.utils.book_new();
   const rows=[['ID','Date','Start','End','Break (hrs)','Rate ($/hr)','Hours','Salary ($)','Type']];
-  recs.forEach(r=>{
+  sortedRecs().forEach(r=>{
     const[lbl]=rateLabel(r.rate);
     rows.push([r.id,r.date,r.s,r.e,parseFloat(r.brk)||0,parseFloat(r.rate)||0,parseFloat(parseFloat(r.hrs).toFixed(2)),parseFloat(parseFloat(r.earn).toFixed(2)),lbl]);
   });
@@ -352,14 +456,13 @@ function exportExcel(){
   ws['!cols']=[16,12,8,8,12,12,10,12,12].map(w=>({wch:w}));
   XLSX.utils.book_append_sheet(wb,ws,'Records');
 
-  const sorted=[...recs].sort((a,b)=>a.date.localeCompare(b.date));
+  const sorted=sortedRecs();
   const tot=recs.reduce((s,r)=>s+(parseFloat(r.earn)||0),0);
   const totH=recs.reduce((s,r)=>s+(parseFloat(r.hrs)||0),0);
   const cpfApplies=tot>CPF_THRESHOLD;
   const cpf=cpfApplies?tot*CPF_RATE:0;
   const net=tot-cpf;
-  const fd=sorted[0]?.date||'',ld=sorted[sorted.length-1]?.date||'';
-
+  const fd=sorted[sorted.length-1]?.date||'',ld=sorted[0]?.date||'';
   const sum=[
     ['SALARY REPORT'],[''],
     ['Period',`${fmtD(fd)} – ${fmtD(ld)}`],
@@ -375,11 +478,8 @@ function exportExcel(){
   const ws2=XLSX.utils.aoa_to_sheet(sum);
   ws2['!cols']=[{wch:28},{wch:30}];
   XLSX.utils.book_append_sheet(wb,ws2,'Summary');
-
-  const d=new Date(fd);
-  const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  XLSX.writeFile(wb,`Salary_${mo[d.getMonth()]}_${d.getFullYear()}.xlsx`);
-  toast('📤 Exported!');
+  XLSX.writeFile(wb,filename);
+  toast('📤 Exported as '+filename);
 }
 
 function importExcel(ev){
